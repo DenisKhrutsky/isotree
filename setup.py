@@ -29,7 +29,7 @@ class build_ext_subclass( build_ext ):
                 e.extra_compile_args = ['/openmp', '/O2', '/std:c++14', '/fp:except-', '/wd4244', '/wd4267', '/wd4018']
                 ### Note: MSVC never implemented C++11
         else:
-            self.add_march_native()
+            self.add_march_x86_64()
             self.add_openmp_linkage()
             self.add_restrict_qualifier()
             self.add_no_math_errno()
@@ -87,15 +87,16 @@ class build_ext_subclass( build_ext ):
 
         build_ext.build_extensions(self)
 
-    def add_march_native(self):
-        arg_march_native = "-march=native"
-        arg_mcpu_native = "-mcpu=native"
-        if self.test_supports_compile_arg(arg_march_native):
+    def add_march_x86_64(self):
+        arg_march_x86_64 = "-march=x86-64"
+        arg_mtune_generic = "-mtune=generic"
+        if self.test_supports_compile_arg(arg_march_x86_64):
             for e in self.extensions:
-                e.extra_compile_args.append(arg_march_native)
-        elif self.test_supports_compile_arg(arg_mcpu_native):
+                e.extra_compile_args.append(arg_march_x86_64)
+
+        if self.test_supports_compile_arg(arg_mtune_generic):
             for e in self.extensions:
-                e.extra_compile_args.append(arg_mcpu_native)
+                e.extra_compile_args.append(arg_mtune_generic)
 
     def add_link_time_optimization(self):
         arg_lto = "-flto"
@@ -212,7 +213,7 @@ class build_ext_subclass( build_ext ):
 setup(
     name  = "isotree",
     packages = ["isotree"],
-    version = '0.4.4',
+    version = '0.4.3.1',
     description = 'Isolation-Based Outlier Detection, Distance, and NA imputation',
     author = 'David Cortes',
     author_email = 'david.cortes.rivera@gmail.com',
